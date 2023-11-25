@@ -4,6 +4,7 @@ import { Eye, EyeSlash } from 'react-bootstrap-icons';
 import SignImg from './SignImg';
 import Popup from './popup/Popup';
 import '../components/popup/Popup.css';
+import { NavLink } from 'react-router-dom';
 
 const Home = () => {
     const [gender, setGender] = useState('');
@@ -242,7 +243,7 @@ const Home = () => {
                             <h2>{popupMessage}</h2>
                             <button className='ok-button' onClick={handlePopupOk}>OK</button>
                         </Popup>
-                        <p className='mt-3'>Aldready Have an Account <span>SignIn</span></p>
+                        <p className='mt-3'>Already Have an Account? <span> <NavLink to="/login">Sign In</NavLink></span></p>
                     </div>
                     <SignImg />
                 </section>

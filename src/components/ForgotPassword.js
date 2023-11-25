@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
 import { Form, Button, InputGroup } from 'react-bootstrap';
-import { Eye, EyeSlash } from 'react-bootstrap-icons';
 import SignImg from './SignImg';
 import '../components/popup/Popup.css';
 import Popup from './popup/Popup';
 import '../components/popup/Popup.css';
 import { NavLink } from 'react-router-dom';
 
-const Lonin = () => {
+const ForgotPassword = () => {
 
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(false);
-    const [usernameError, setUsernameError] = useState("");
-    const [passwordError, setPasswordError] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
+    const [emailError, setEmailError] = useState("");
     const [buttonPopup, setButtonPopup] = useState(false);
     const [popupMessage, setPopupMessage] = useState("");
 
@@ -24,47 +21,31 @@ const Lonin = () => {
             [name]: value,
         }));
 
-        //Validation for Username
-        if (name === 'username') {
-            const isValidUsername = /^[a-zA-Z0-9]{5,}$/.test(value);
-            setUsernameError(isValidUsername ? "" : "Username must be at least 5 characters and contain only letters and numbers");
+        // Validation for Email
+        if (name === 'email') {
+            const isValidEmail = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value);
+            setEmailError(isValidEmail ? "" : "Enter a valid email address");
         }
-        // Validate password
-        if (name === 'password') {
-            // Implement your password validation logic here
-            const isValidPassword = /^[a-zA-Z0-9]{8,}$/.test(value) && !/\s/.test(value);
-            setPasswordError(isValidPassword ? "" : "Your password must be a minimum of 8 characters and should not contain any spaces.");
-        }
-    };
-
-    const toggleShowPassword = () => {
-        setShowPassword(!showPassword);
     };
 
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        loginApiCall(data);
+        forgotPasswordApiCall(data);
 
     };
-    
-    const loginApiCall = (data) => {
+
+    const forgotPasswordApiCall = (data) => {
         if (Object.keys(data).length === 0) {
             alert("Please fill the form");
             return;
-        } else if (usernameError !== "") {
-            alert(usernameError);
+        } else if (emailError !== "") {
+            alert(emailError);
             return;
-        } else if (passwordError !== "") {
-            alert(passwordError);
+        }  else if (!data || !data.email) {
+            alert("Email is missing in the form");
             return;
-        }  else if (!data || !data.username) {
-            alert("Please enter username");
-            return;
-        } else if (!data || !data.password) {
-            alert("Please enter password");
-            return;
-        } 
+        }
 
         setLoading(true);
 
@@ -99,13 +80,10 @@ const Lonin = () => {
 
     const clearForm = () => {
         setData({
-            username: '',
-            password: '',
+            email: '',
         });
         setLoading(false);
-        setUsernameError('');
-        setPasswordError('');
-        setShowPassword(false);
+        setEmailError('');
     };
 
     const handlePopupOk = () => {
@@ -114,31 +92,23 @@ const Lonin = () => {
         window.location.reload();
     };
 
+
   return (
     <>
     <div className="container mt-3">
                 <section className='d-flex justify-content-between'>
                     <div className="left_data mt-3 p-3" style={{ width: "100%" }}>
-                        <h3 className='text-center col-lg-7'>Sign In</h3>
+                        <h3 className='text-center col-lg-7 mb-4'>Forgot Password</h3>
                         <Form onSubmit={(e) => handleSubmit(e)}>
                           
-                            <Form.Group className="mb-3 col-lg-7" controlId="formBasicUsername">
-                                <Form.Control type="text" name='username' onChange={getdata} placeholder="Username" isInvalid={!!usernameError} />
+                        <Form.Group className="mb-3 col-lg-7" controlId="formBasicEmail">
+                                <Form.Control type="email" name='email' onChange={getdata} placeholder="Enter email" isInvalid={!!emailError} />
+                                <Form.Text className="text-muted">
+                                    We'll never share your email with anyone else.
+                                </Form.Text>
                                 <Form.Control.Feedback type="invalid">
-                                    {usernameError}
+                                    {emailError}
                                 </Form.Control.Feedback>
-                            </Form.Group>
-
-                            <Form.Group className="mb-3 col-lg-7" controlId="formBasicPassword">
-                                <InputGroup>
-                                    <Form.Control type={showPassword ? 'text' : 'password'} name='password' onChange={getdata} placeholder="Password" isInvalid={!!passwordError} />
-                                    <InputGroup.Text onClick={toggleShowPassword} style={{ cursor: 'pointer' }}>
-                                        {showPassword ? <EyeSlash /> : <Eye />}
-                                    </InputGroup.Text>
-                                    <Form.Control.Feedback type="invalid">
-                                        {passwordError}
-                                    </Form.Control.Feedback>
-                                </InputGroup>
                             </Form.Group>
                             
                             <Button variant="primary" className='col-lg-7' style={{ background: "rgb(67, 185, 127)" }} type="submit" disabled={loading} >
@@ -150,7 +120,7 @@ const Lonin = () => {
                             <button className='ok-button' onClick={handlePopupOk}>OK</button>
                         </Popup>
                     
-                        <p className='mt-3'><span> <NavLink to="/forgot-password">Forgot Password?</NavLink></span></p>
+                        <p className='mt-3'><span> <NavLink to="/login">Sign In</NavLink></span></p>
                     </div>
                     <SignImg />
                 </section>
@@ -159,4 +129,4 @@ const Lonin = () => {
   )
 }
 
-export default Lonin
+export default ForgotPassword

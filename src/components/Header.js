@@ -2,16 +2,19 @@ import React from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
+import { NavLink } from 'react-router-dom';
+import './Header.css'
 
 const Header = () => {
     return (
         <>
             <Navbar bg="dark" data-bs-theme="dark">
                 <Container>
-                    <Navbar.Brand href="#home">User Registration</Navbar.Brand>
+                    <Navbar.Brand >Password Manager</Navbar.Brand>
                     <Nav className="me-auto">
-                        <Nav.Link href="#home">Home</Nav.Link>
-                        <Nav.Link href="#features">Features</Nav.Link>
+                        <NavLink to='/' className="navlink-home"> Home</NavLink>
+                        <NavLink to='/contact' className="navlink-contact"> Contact</NavLink>
+                        <NavLink to='/about' className="navlink-about"> About Us</NavLink>
                     </Nav>
                 </Container>
             </Navbar>
