@@ -162,7 +162,6 @@ const Home = () => {
             confirmpassword: '',
         });
         setLoading(false);
-        setPopupMessage('');
         setPhoneNumberError('');
         setEmailError('');
         setUsernameError('');
