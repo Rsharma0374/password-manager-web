@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import './Header.css'
-import logo2 from '../images/logo2.png'
+import logo2 from '../../images/logo2.png'
 
 const Header = () => {
     const [menuVisible, setMenuVisible] = useState(false);

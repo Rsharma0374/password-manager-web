@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, InputGroup } from 'react-bootstrap';
 import { Eye, EyeSlash } from 'react-bootstrap-icons';
-import SignImg from './SignImg';
-import '../components/popup/Popup.css';
-import Popup from './popup/Popup';
-import '../components/popup/Popup.css';
+import SignImg from '../SignImg';
+import Popup from '../popup/Popup';
+import '../popup/Popup.css';
 import { NavLink } from 'react-router-dom';
+import sha1 from 'js-sha1';
 
-const Lonin = () => {
+const Login = () => {
 
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(false);
@@ -68,6 +68,7 @@ const Lonin = () => {
         } 
 
         setLoading(true);
+        const encryptPassword = sha1(data.password);
 
         const url = "https://api.r-sharma.in/user/user-login"
         fetch(url, {
@@ -78,7 +79,7 @@ const Lonin = () => {
             },
             body: JSON.stringify({
                 sUserName: data.username,
-                sSHAPassword: data.password,
+                sSHAPassword: encryptPassword,
             }),
 
         })
@@ -175,4 +176,4 @@ const Lonin = () => {
   )
 }
 
-export default Lonin
+export default Login

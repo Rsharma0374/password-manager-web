@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, InputGroup } from 'react-bootstrap';
 import { Eye, EyeSlash } from 'react-bootstrap-icons';
-import SignImg from './SignImg';
-import Popup from './popup/Popup';
-import '../components/popup/Popup.css';
+import SignImg from '../SignImg';
+import Popup from '../popup/Popup';
+import '../popup/Popup.css';
 import { NavLink } from 'react-router-dom';
 
 const Home = () => {

@@ -1,12 +1,12 @@
 import React from 'react';
-import Home from './components/Home';
-import Header from './components/Header';
+import Home from './components/signup/Home';
+import Header from './components/header/Header';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Routes, Route} from 'react-router-dom';
-import Login from './components/Lonin';
-import ForgotPassword from './components/ForgotPassword';
-import Contact from './components/Contact';
-import About from './components/About';
+import Login from './components/login/Login';
+import ForgotPassword from './components/forgotPassword/ForgotPassword';
+import Contact from './components/contact/Contact';
+import About from './components/about/About';
 
 
 function App() {
