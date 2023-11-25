@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import SignImg from './SignImg';
 import '../components/popup/Popup.css';
@@ -13,6 +13,7 @@ const ForgotPassword = () => {
     const [emailError, setEmailError] = useState("");
     const [buttonPopup, setButtonPopup] = useState(false);
     const [popupMessage, setPopupMessage] = useState("");
+    const [showSignImg, setShowSignImg] = useState(true);
 
     const getdata = (e) => {
         const { name, value } = e.target;
@@ -92,6 +93,21 @@ const ForgotPassword = () => {
         window.location.reload();
     };
 
+    // Update showSignImg state based on screen width
+    useEffect(() => {
+        const handleResize = () => {
+            setShowSignImg(window.innerWidth >= 800);
+        };
+
+        handleResize(); // Initial check
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
 
   return (
     <>
@@ -122,7 +138,7 @@ const ForgotPassword = () => {
                     
                         <p className='mt-3'><span> <NavLink to="/login">Sign In</NavLink></span></p>
                     </div>
-                    <SignImg />
+                    {showSignImg && <SignImg />}
                 </section>
             </div>
     </>

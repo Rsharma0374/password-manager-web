@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, InputGroup } from 'react-bootstrap';
 import { Eye, EyeSlash } from 'react-bootstrap-icons';
 import SignImg from './SignImg';
@@ -16,6 +16,7 @@ const Lonin = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [buttonPopup, setButtonPopup] = useState(false);
     const [popupMessage, setPopupMessage] = useState("");
+    const [showSignImg, setShowSignImg] = useState(true);
 
     const getdata = (e) => {
         const { name, value } = e.target;
@@ -114,6 +115,21 @@ const Lonin = () => {
         window.location.reload();
     };
 
+    // Update showSignImg state based on screen width
+    useEffect(() => {
+        const handleResize = () => {
+            setShowSignImg(window.innerWidth >= 800);
+        };
+
+        handleResize(); // Initial check
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
   return (
     <>
     <div className="container mt-3">
@@ -152,7 +168,7 @@ const Lonin = () => {
                     
                         <p className='mt-3'><span> <NavLink to="/forgot-password">Forgot Password?</NavLink></span></p>
                     </div>
-                    <SignImg />
+                    {showSignImg && <SignImg />}
                 </section>
             </div>
     </>

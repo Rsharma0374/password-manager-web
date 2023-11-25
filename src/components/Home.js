@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, InputGroup } from 'react-bootstrap';
 import { Eye, EyeSlash } from 'react-bootstrap-icons';
 import SignImg from './SignImg';
@@ -18,7 +18,7 @@ const Home = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [buttonPopup, setButtonPopup] = useState(false);
     const [popupMessage, setPopupMessage] = useState("");
-
+    const [showSignImg, setShowSignImg] = useState(true);
 
 
 
@@ -177,6 +177,21 @@ const Home = () => {
         window.location.reload();
     };
 
+    // Update showSignImg state based on screen width
+    useEffect(() => {
+        const handleResize = () => {
+            setShowSignImg(window.innerWidth >= 800);
+        };
+
+        handleResize(); // Initial check
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     return (
         <>
             <div className="container mt-3">
@@ -245,7 +260,7 @@ const Home = () => {
                         </Popup>
                         <p className='mt-3'>Already Have an Account? <span> <NavLink to="/login">Sign In</NavLink></span></p>
                     </div>
-                    <SignImg />
+                    {showSignImg && <SignImg />}
                 </section>
             </div>
         </>
