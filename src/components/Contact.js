@@ -7,7 +7,7 @@ import '../components/popup/Popup.css';
 import { NavLink } from 'react-router-dom';
 const Contact = () => {
   return (
-    <div>Contact</div>
+    <div>Contact updated</div>
   )
 }
 
