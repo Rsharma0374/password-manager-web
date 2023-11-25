@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button, InputGroup } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import SignImg from './SignImg';
 import '../components/popup/Popup.css';
 import Popup from './popup/Popup';
