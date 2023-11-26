@@ -136,7 +136,7 @@ const Login = () => {
     <div className="container mt-3">
                 <section className='d-flex justify-content-between'>
                     <div className="left_data mt-3 p-3" style={{ width: "100%" }}>
-                        <h3 className='text-center col-lg-7'>Sign In</h3>
+                        <h3 className='header-logo text-center col-lg-7 mb-4'>Sign In</h3>
                         <Form onSubmit={(e) => handleSubmit(e)}>
                           
                             <Form.Group className="mb-3 col-lg-7" controlId="formBasicUsername">

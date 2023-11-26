@@ -24,6 +24,7 @@ const Header = () => {
                             <li><NavLink to='/' onClick={closeMenu}>Home</NavLink></li>
                             <li><NavLink to='/about' onClick={closeMenu}>About</NavLink></li>
                             <li><NavLink to='/contact' onClick={closeMenu}>Contact</NavLink></li>
+                            <li><NavLink to='/login' onClick={closeMenu}>Login</NavLink></li>
                             <li onClick={closeMenu}><i className="fa-solid fa-x"></i></li>
                         </ul>
                         <i className="fa-solid fa-bars" onClick={openMenu}></i>
