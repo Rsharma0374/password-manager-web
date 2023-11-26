@@ -12,6 +12,7 @@ const ForgotPassword = () => {
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(false);
     const [emailError, setEmailError] = useState("");
+    const [otpError, setOtpError] = useState("");
     const [buttonPopup, setButtonPopup] = useState(false);
     const [popupMessage, setPopupMessage] = useState("");
     const [showSignImg, setShowSignImg] = useState(true);
@@ -31,6 +32,11 @@ const ForgotPassword = () => {
         if (name === 'email') {
             const isValidEmail = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value);
             setEmailError(isValidEmail ? "" : "Enter a valid email address");
+        }
+
+        if (name === 'otp') {
+            const isValidOtp = /^\d{6}$/.test(value);
+            setOtpError(isValidOtp ? "" : "Enter a valid 6-digit OTP");
         }
     };
 
@@ -101,6 +107,16 @@ const ForgotPassword = () => {
     };
 
     const validateOtp = (data) => {
+        if (Object.keys(data).length === 0) {
+            alert("Please enter otp");
+            return;
+        } else if (otpError !== "") {
+            alert(otpError);
+            return;
+        } else if (!data || !data.otp) {
+            alert("Please enter otp");
+            return;
+        }
         setLoading(true);
 
         const url = "https://api.r-sharma.in/user/validate-email-otp";
@@ -203,7 +219,7 @@ const ForgotPassword = () => {
                                     <h2>{popupMessage}</h2>
                                     <input className='input-otp' name='otp' type="number" onChange={getdata} placeholder='Enter Otp' />
                                     <Button variant="primary" className='col-lg-3 m-1' style={{ background: "rgb(67, 185, 127)" }} onClick={() => validateOtp(data)} type="submit" disabled={loading}>
-                                    {loading ? (<span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>) : ("Verify Otp")}
+                                        {loading ? (<span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>) : ("Verify Otp")}
                                     </Button>
                                 </>
                             )}
