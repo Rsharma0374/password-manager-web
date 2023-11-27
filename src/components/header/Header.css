@@ -8,6 +8,7 @@
 .logo {
     width: 300px;
     text-align: center;
+    margin-left: 12px;
 }
 
 .container {
@@ -19,6 +20,8 @@ nav {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
+    background: linear-gradient(to right, rgb(232, 161, 219), rgb(138, 196, 208));
+    border-radius: 9px;
 }
 
 nav ul li {
@@ -80,6 +83,11 @@ nav .fa-solid {
         display: block;
         font-size: 25px;
     }
+    .logo {
+        width: 300px;
+        text-align: center;
+        margin-left: 12px;
+    }
 
     nav ul li {
         display: block;
@@ -97,7 +105,7 @@ nav .fa-solid {
         list-style-type: none;
         margin: 0;
         padding: 0;
-        background-color: #ff004f;
+        background: linear-gradient(to right, rgb(156, 119, 150), rgb(191, 227, 235));
         position: fixed;
         top: 0;
         right: -200px;
@@ -106,6 +114,7 @@ nav .fa-solid {
         overflow-x: hidden;
         transition: 0.5s;
         z-index: 1;
+        border-radius: 10px;
     }
 
     .sidemenu li {
@@ -118,6 +127,6 @@ nav .fa-solid {
     }
 
     .fa-bars {
-        margin-top: 0;
+        margin-right: 15px;
     }
 }
