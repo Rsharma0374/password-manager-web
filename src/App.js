@@ -8,6 +8,7 @@ import ForgotPassword from './components/forgotPassword/ForgotPassword';
 import Contact from './components/contact/Contact';
 import About from './components/about/About';
 import Dashboard from './components/dashboard/Dashboard'
+import Footer from './components/footer/Footer';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
     <Route path='about' element= {<About/>} />
     <Route path='dashboard' element= {<Dashboard/>} />
    </Routes>
+   <Footer/>
    </>
   );
 };

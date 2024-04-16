@@ -4,6 +4,7 @@ import { Eye, EyeSlash } from 'react-bootstrap-icons';
 import SignImg from '../SignImg';
 import Popup from '../popup/Popup';
 import '../popup/Popup.css';
+import OtpPopup from '../otpPopup/OtpPopup';
 import { NavLink } from 'react-router-dom';
 import sha1 from 'js-sha1';
 
@@ -17,6 +18,10 @@ const Login = () => {
     const [buttonPopup, setButtonPopup] = useState(false);
     const [popupMessage, setPopupMessage] = useState("");
     const [showSignImg, setShowSignImg] = useState(true);
+    const [showOtpPopup, setShowOtpPopup] = useState(false);
+    const [otpMessage, setOtpMessage] = useState("");
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+
 
     const getdata = (e) => {
         const { name, value } = e.target;
@@ -85,10 +90,15 @@ const Login = () => {
         })
             .then(response => response.json())
             .then(data => {
-                setPopupMessage(data && data.oBody.payLoad && data.oBody.payLoad.sResponse);
-                console.log(data.oBody.payLoad.sResponse)
-                setButtonPopup(true);
-                clearForm();
+                if (data && data.oBody.payLoad && data.oBody.payLoad.sResponse === "Access Granted") {
+                    // Show OTP popup
+                    setShowOtpPopup(true);
+                    setOtpMessage(data.oBody.payLoad.sOtpToken)
+                } else {
+                    setPopupMessage(data && data.oBody.payLoad && data.oBody.payLoad.sResponse);
+                    setButtonPopup(true);
+                    clearForm();
+                }
 
             })
             .catch(error => {
@@ -115,6 +125,55 @@ const Login = () => {
         // Reload the home page
         window.location.reload();
     };
+
+    const handleOtpSubmit = (otp) => {
+        // Handle OTP submission here
+        console.log('Submitted OTP:', otp);
+        // Call your API function to submit OTP here
+        // For now, let's assume you have a function named 'submitOtpApiCall'
+        submitOtpApiCall(otp);
+        setShowOtpPopup(false); // Close OTP popup after submission
+    };
+
+    const submitOtpApiCall = (otp) => {
+        // Make API call to submit OTP
+        // Example:
+        const otpUrl = "https://api.r-sharma.in/user/validate-verification-otp";
+        fetch(otpUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({
+                sOtp: otp,
+                sOtpId: otpMessage,
+                sProductName: "Password-Manager"
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.oBody.payLoad && data.oBody.payLoad.bSuccess === true) {
+                setPopupMessage("Otp validated success");
+                setButtonPopup(true);
+                setShowSuccessPopup(true)
+                clearForm();
+
+            } else if (data && data.oBody.payLoad && data.oBody.payLoad.bSuccess === false && data.oBody.payLoad.sMessage === "Otp Expired.") {
+                setPopupMessage(data.oBody.payLoad.sMessage);
+                setButtonPopup(true);
+                setShowSuccessPopup(true)
+                clearForm();
+
+            } else {
+                setPopupMessage("Invalid OTP");
+            }
+        })
+        .catch(error => {
+            // Handle error if OTP submission fails
+            // You can show an error message or retry OTP submission
+        });
+    }
 
     // Update showSignImg state based on screen width
     useEffect(() => {
@@ -168,10 +227,12 @@ const Login = () => {
                         </Popup>
                     
                         <p className='mt-3'><span> <NavLink to="/forgot-password">Forgot Password?</NavLink></span></p>
+                        <p className='mt-3'>Create an account <span> <NavLink to="/">Sign Up</NavLink></span></p>
                     </div>
                     {showSignImg && <SignImg />}
                 </section>
             </div>
+            {showOtpPopup && <OtpPopup onSubmit={handleOtpSubmit} />}
     </>
   )
 }

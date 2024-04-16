@@ -225,6 +225,7 @@ const ForgotPassword = () => {
                             )}
                         </Popup>
                         <p className='mt-3'>Already Have an Account? <span> <NavLink to="/login">Sign In</NavLink></span></p>
+                        <p className='mt-3'>Create an account <span> <NavLink to="/">Sign Up</NavLink></span></p>
                     </div>
                     {showSignImg && <SignImg />}
                 </section>
