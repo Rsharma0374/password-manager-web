@@ -49,6 +49,22 @@ export const sendEmailVerificationOTP = async (email) => {
   return response.json();
 };
 
+export const validateOTP = async (otp, otpId) => {
+
+  const mappedDetails = {
+    sOtp: otp,
+    sOtpId: otpId,
+    sProductName: PRODUCT_NAME,
+  };
+
+  const response = await fetch(`${API_URL}/communications/validate-email-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(mappedDetails),
+  });
+  return response.json();
+};
+
 export const forgotPasswordService = {
   // Send OTP to email
   sendOTP: async (email) => {

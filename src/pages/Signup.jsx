@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signup, sendEmailVerificationOTP } from '../services/authService'
+import { signup, sendEmailVerificationOTP, validateOTP } from '../services/authService'
 
 import { Eye, EyeOff, Mail, Lock, User, Calendar, UsersRound } from 'lucide-react';
 
@@ -9,7 +9,8 @@ function Signup() {
   const [step, setStep] = useState(1); // 1 for SignUp, 2 for OTP
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const [errorMessage, setErrorMessage] = useState(''); // For showing error messages
+  const [otpId, setOtpId] = useState('');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -34,12 +35,36 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your signup logic here
-    const res = await sendEmailVerificationOTP(formData.email);
-    
-          console.log(res);
-
-    setStep(2); //for otp
+    setLoading(true);
+    setErrorMessage(''); // Clear any previous error messages
+    try {
+      // Add your signup logic here
+      const res = await sendEmailVerificationOTP(formData.email);
+      if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.bSuccess === true) {
+        const otpId = res.oBody.payLoad.sOtp;
+        setOtpId(otpId);
+        setStep(2); //for otp
+      } else if (res && res.aError && res.aError.length > 0) {
+        const error = res.aError[0];
+        if (error) {
+          setErrorMessage(error.sMessage);
+          setTimeout(() => setErrorMessage(''), 5000);
+        } else {
+          setErrorMessage("An unexpected error occurred. Please try again.");
+          setTimeout(() => setErrorMessage(''), 5000);
+        }
+      } else {
+        setErrorMessage("An unexpected error occurred. Please contact system administrator.");
+        setTimeout(() => setErrorMessage(''), 5000);
+      }
+    } catch (error) {
+      console.error('Error occurred while sending otp:', error);
+      setErrorMessage("Failed to send OTP. Please check your network connection and try again.");
+      setTimeout(() => setErrorMessage(''), 5000);
+    } finally {
+      setLoading(false);
+    }
+    // setStep(2); //for otp
     console.log('Form submitted:', formData);
   };
 
@@ -47,9 +72,11 @@ function Signup() {
     e.preventDefault();
     setLoading(true);
     try {
-      // Call your API to verify OTP
-      // await verifyOTP(email, otp);
-      navigate('/'); // Navigate to login after successful verification
+      // Add your signup logic here
+      const res = await validateOTP(otp, otpId);
+      console.log(res);
+
+      // navigate('/'); // Navigate to login after successful verification
     } catch (error) {
       console.error('Error verifying OTP:', error);
     } finally {
@@ -70,6 +97,12 @@ function Signup() {
               : 'Enter the OTP sent to your email'}
           </p>
         </div>
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="mb-6 p-4 text-sm text-red-700 bg-red-100 rounded-lg">
+            {errorMessage}
+          </div>
+        )}
 
         {step === 1 ? (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -188,9 +221,10 @@ function Signup() {
 
             <button
               type="submit"
+              disabled={loading}
               className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
             >
-              Create Account
+              {loading ? 'Loading...' : 'Create Account'}
             </button>
           </form>
         ) : (
