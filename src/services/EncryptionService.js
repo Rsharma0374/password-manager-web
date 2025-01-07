@@ -21,7 +21,7 @@ class EncryptionService {
         if (!this.#keyPromise) {
             this.#keyPromise = (async () => {
                 try {
-                    const response = await fetch('http://localhost:10001/api/key');
+                    const response = await fetch('https://api.guardianservices.in/api/key');
                     if (!response.ok) {
                         throw new Error('Failed to fetch encryption key');
                     }
@@ -63,7 +63,7 @@ class EncryptionService {
         try {
             const encryptedData = await this.encrypt(JSON.stringify(data));
             
-            const response = await fetch(`http://localhost:10001/api/${endpoint}`, {
+            const response = await fetch(`https://api.guardianservices.in/api/${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

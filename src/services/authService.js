@@ -1,6 +1,6 @@
 import { encryptionService } from "./EncryptionService";
 
-const API_URL = 'http://localhost:10001';
+const API_URL = 'https://api.guardianservices.in';
 const PRODUCT_NAME = "PASSWORD_MANAGER"
 
 export const login = async (credentials) => {
