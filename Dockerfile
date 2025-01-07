@@ -2,7 +2,7 @@
 FROM node:18 as build
 
 # Set the working directory inside the container
-WORKDIR /password-manager-web
+WORKDIR /app
 
 # Copy package.json and package-lock.json for dependency installation
 COPY package*.json ./
@@ -20,7 +20,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copy the build output to Nginx's default HTML directory
-COPY --from=build /password-manager-web/build /usr/share/nginx/html
+COPY --from=build /app/build /usr/share/nginx/html
 
 # Expose port 80 for the app
 EXPOSE 80
