@@ -199,6 +199,7 @@ function Signup() {
             {errorMessage}
           </div>
         )}
+        {/* Success Message */}
         {successMessage && (
           <div className="mb-6 p-4 text-sm text-green-700 bg-green-100 rounder-lg">
             {successMessage}

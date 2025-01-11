@@ -1,5 +1,7 @@
 // encryptionService.js
 import CryptoJS from 'crypto-js';
+const API_URL = 'https://api.guardianservices.in';
+// const API_URL = 'http://localhost:10001';
 
 class EncryptionService {
     static instance = null;
@@ -21,13 +23,32 @@ class EncryptionService {
         if (!this.#keyPromise) {
             this.#keyPromise = (async () => {
                 try {
-                    const response = await fetch('https://api.guardianservices.in/api/key');
+                    const response = await fetch(`${API_URL}/api/key`);
                     if (!response.ok) {
+
                         throw new Error('Failed to fetch encryption key');
                     }
-                    const key = await response.text();
-                    this.#encryptionKey = key;
-                    return key;
+
+                    // Parse the JSON response
+                    const jsonResponse = await response.json();
+
+                    // Extract the payload from oBody
+                    const encodedKey = jsonResponse.oBody?.payLoad;
+                    if (!encodedKey) {
+                        throw new Error('Encryption key payload is missing in the response');
+                    }
+
+                    // Decode the Base64 string into a byte array
+                    const decodedBytes = Uint8Array.from(atob(encodedKey), char => char.charCodeAt(0));
+
+                    // Remove the first 16 bytes (IV)
+                    const keyBytes = decodedBytes.slice(16);
+
+                    // Convert the key bytes back to a Base64 string if needed
+                    const encryptionKey = btoa(String.fromCharCode(...keyBytes));
+
+                    this.#encryptionKey = encryptionKey;
+                    return encryptionKey;
                 } catch (error) {
                     console.error('Error fetching encryption key:', error);
                     throw error;
@@ -36,6 +57,7 @@ class EncryptionService {
         }
         return this.#keyPromise;
     }
+
 
     async initialize() {
         return this.#initializeKey();
@@ -62,7 +84,7 @@ class EncryptionService {
     async post(endpoint, data) {
         try {
             const encryptedData = await this.encrypt(JSON.stringify(data));
-            
+
             const response = await fetch(`https://api.guardianservices.in/api/${endpoint}`, {
                 method: 'POST',
                 headers: {

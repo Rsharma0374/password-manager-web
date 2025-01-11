@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, ArrowLeft } from 'lucide-react';
 import { forgotPasswordService } from '../services/authService';
+import CryptoJS from 'crypto-js';
+
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -9,6 +11,25 @@ const ForgotPassword = () => {
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState(1); // 1 for email, 2 for OTP
   const [loading, setLoading] = useState(false);
+  const [otpId, setOtpId] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // For showing error messages
+  const [successMessage, setSuccessMessage] = useState(''); // For showing success messages
+  const [inputType, setInputType] = useState("text");
+
+
+
+
+  const handleOtpChange = (e) => {
+    setOtp(e.target.value);
+
+    // Set the input type to "text" when typing starts
+    setInputType("text");
+
+    // Convert to "password" after 2 seconds
+    setTimeout(() => {
+      setInputType("password");
+    }, 2000);
+  };
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
@@ -17,8 +38,23 @@ const ForgotPassword = () => {
       // Call your API to send OTP
       // await sendOTP(email);
       const res = await forgotPasswordService.sendOTP(email);
-      console.log(res);
-      setStep(2);
+      if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.bSuccess === true) {
+        const otpId = res.oBody.payLoad.sOtp;
+        setOtpId(otpId);
+        setStep(2); //for otp
+      } else if (res && res.aError && res.aError.length > 0) {
+        const error = res.aError[0];
+        if (error) {
+          setErrorMessage(error.sMessage);
+          setTimeout(() => setErrorMessage(''), 5000);
+        } else {
+          setErrorMessage("An unexpected error occurred. Please try again.");
+          setTimeout(() => setErrorMessage(''), 5000);
+        }
+      } else {
+        setErrorMessage("An unexpected error occurred. Please contact system administrator.");
+        setTimeout(() => setErrorMessage(''), 5000);
+      }
     } catch (error) {
       console.error('Error sending OTP:', error);
     } finally {
@@ -30,13 +66,38 @@ const ForgotPassword = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Call your API to verify OTP
-      // await verifyOTP(email, otp);
-      navigate('/'); // Navigate to login after successful verification
+      const encryptedValue = CryptoJS.SHA1(otp + otpId).toString(CryptoJS.enc.Hex);
+      // Add your signup logic here
+      const res = await forgotPasswordService.validateOtpRestPassword(otp, otpId);
+      if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.sStatus === "SUCCESS" && res.oBody.payLoad.sServerSideValidation === encryptedValue) {
+        setSuccessMessage(res.oBody.payLoad.sMessage);
+        // Keep loading true until navigation
+        setTimeout(() => {
+          setLoading(false);
+          navigate('/');
+        }, 5000);
+      } else if (res && res.aError && res.aError.length > 0) {
+        const error = res.aError[0];
+        if (error) {
+          setErrorMessage(error.sMessage);
+          setTimeout(() => setErrorMessage(''), 5000);
+          setLoading(false);
+        } else {
+          setErrorMessage("An unexpected error occurred. Please try again.");
+          setTimeout(() => setErrorMessage(''), 5000);
+          setLoading(false);
+        }
+      } else {
+        setErrorMessage("An unexpected error occurred. Please contact system administrator.");
+        setTimeout(() => setErrorMessage(''), 5000);
+        setLoading(false);
+      }
+
+      // navigate('/'); // Navigate to login after successful verification
     } catch (error) {
       console.error('Error verifying OTP:', error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -60,15 +121,28 @@ const ForgotPassword = () => {
           </p>
         </div>
 
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="mb-6 p-4 text-sm text-red-700 bg-red-100 rounded-lg">
+            {errorMessage}
+          </div>
+        )}
+        {/* Success Message */}
+        {successMessage && (
+          <div className="mb-6 p-4 text-sm text-green-700 bg-green-100 rounder-lg">
+            {successMessage}
+          </div>
+        )}
+
         {step === 1 ? (
           <form onSubmit={handleEmailSubmit} className="space-y-4">
             <div className="relative">
               <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <input
-                type="email"
-                placeholder="Enter your email"
+                type={inputType}
+                placeholder="Enter your email or username"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleOtpChange}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                 required
               />

@@ -1,6 +1,7 @@
 import { encryptionService } from "./EncryptionService";
 
 const API_URL = 'https://api.guardianservices.in';
+// const API_URL = 'http://localhost:10001';
 const PRODUCT_NAME = "PASSWORD_MANAGER"
 
 export const login = async (credentials) => {
@@ -68,45 +69,43 @@ export const validateOTP = async (otp, otpId) => {
 export const forgotPasswordService = {
   // Send OTP to email
   sendOTP: async (email) => {
-    try {
-      const encryptedData = await encryptionService.encrypt(JSON.stringify(email));
-      const response = await fetch(`${API_URL}/api/data`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ encryptedPayload: encryptedData }),
-      });
 
-      // if (!response.ok) {
-      //   throw new Error('Failed to send OTP');
-      // }
+    const mappedDetails = {
+      sEmailId: email,
+      sUsername: "",
+      sProductName: PRODUCT_NAME,
+    };
+    const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+    const response = await fetch(`${API_URL}/auth/forget-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ encryptedPayload: encryptedData }),
+    });
 
-      return await response;
-    } catch (error) {
-      throw error;
-    }
+    return response.json();
   },
 
   // Verify OTP
-  verifyOTP: async (email, otp) => {
-    try {
-      const response = await fetch(`${API_URL}/verify-otp`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, otp }),
-      });
+  validateOtpRestPassword: async (otp, otpId) => {
 
-      if (!response.ok) {
-        throw new Error('Invalid OTP');
-      }
+    const mappedDetails = {
+      sOtp: otp,
+      sOtpId: otpId,
+      sProductName: PRODUCT_NAME,
+    };
+    const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
 
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+    const response = await fetch(`${API_URL}/communications/validate-otp-reset-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ encryptedPayload: encryptedData }),
+    });
+
+    return response.json();
   },
 
   // Reset password
