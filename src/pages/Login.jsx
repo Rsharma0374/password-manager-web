@@ -10,23 +10,44 @@ const Login = () => {
     const navigate = useNavigate();
 
     const [showPassword, setShowPassword] = useState(false);
-    const [shaPassword, setShaPassword] = useState('');
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [otp, setOtp] = useState('');
+    const [otpId, setOtpId] = useState('');
     const [step, setStep] = useState(1);
+    const [errorMessage, setErrorMessage] = useState(''); // For showing error messages
+    const [successMessage, setSuccessMessage] = useState(''); // For showing success messages
+    const [loading, setLoading] = useState(false);
 
 
-    const handleSubmit= async (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true)
         try {
             const bCryptPassword = await hashPassword(password)
 
             if (step === 1) {
                 const res = await login(identifier, bCryptPassword);
-                console.log(res)
-                // In a real app, validate email/password here
-                // setStep(2);
+                if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.sStatus === "SUCCESS") {
+                    const otpId = res.oBody.payLoad.sOtp;
+                    setSuccessMessage(res.oBody.payLoad.sResponse)
+                    setTimeout(() => setSuccessMessage(''), 5000);
+                    setOtpId(otpId);
+                    setStep(2); //for otp
+                } else if (res && res.aError && res.aError.length > 0) {
+                    const error = res.aError[0];
+                    if (error) {
+                        setErrorMessage(error.sMessage);
+                        setTimeout(() => setErrorMessage(''), 5000);
+                    } else {
+                        setErrorMessage("An unexpected error occurred. Please try again.");
+                        setTimeout(() => setErrorMessage(''), 5000);
+                    }
+                } else {
+                    setErrorMessage("An unexpected error occurred. Please contact system administrator.");
+                    setTimeout(() => setErrorMessage(''), 5000);
+                }
             } else {
                 // In a real app, verify OTP here
                 console.log('Login successful');
@@ -36,10 +57,10 @@ const Login = () => {
             console.error('Error occurred while sending otp:', error);
             setErrorMessage("Failed to send OTP. Please check your network connection and try again.");
             setTimeout(() => setErrorMessage(''), 5000);
-          } finally {
+        } finally {
             setLoading(false);
-          }
-        
+        }
+
     };
 
     return (
@@ -55,6 +76,18 @@ const Login = () => {
                             : 'We sent a code to your email'}
                     </p>
                 </div>
+                {/* Error Message */}
+                {errorMessage && (
+                    <div className="mb-6 p-4 text-sm text-red-700 bg-red-100 rounded-lg">
+                        {errorMessage}
+                    </div>
+                )}
+                {/* Success Message */}
+                {successMessage && (
+                    <div className="mb-6 p-4 text-sm text-green-700 bg-green-100 rounder-lg">
+                        {successMessage}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {step === 1 ? (
@@ -63,7 +96,7 @@ const Login = () => {
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                                     <input
-                                        type="email"
+                                        type="text"
                                         placeholder="Email or Username"
                                         value={identifier}
                                         onChange={(e) => setIdentifier(e.target.value)}
@@ -140,9 +173,16 @@ const Login = () => {
 
                     <button
                         type="submit"
+                        disabled={loading}
                         className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                     >
-                        {step === 1 ? 'Continue' : 'Verify & Login'}
+                        {loading ? (
+                            step === 1 ? "Sending OTP..." : "Verifying..." // Display "Verifying..." in step 2
+                        ) : step === 1 ? (
+                            "Continue"
+                        ) : (
+                            "Verify and Login"
+                        )}
                     </button>
                 </form>
 

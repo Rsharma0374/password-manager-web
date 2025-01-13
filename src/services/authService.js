@@ -77,11 +77,10 @@ export const validateOTP = async (otp, otpId) => {
 
 export const forgotPasswordService = {
   // Send OTP to email
-  sendOTP: async (email) => {
+  sendOTP: async (identifier) => {
 
     const mappedDetails = {
-      sEmailId: email,
-      sUsername: "",
+      sUserIdentifier: identifier,
       sProductName: PRODUCT_NAME,
     };
     const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));

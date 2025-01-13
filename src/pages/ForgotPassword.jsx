@@ -7,7 +7,6 @@ import CryptoJS from 'crypto-js';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState(1); // 1 for email, 2 for OTP
   const [loading, setLoading] = useState(false);
@@ -15,6 +14,7 @@ const ForgotPassword = () => {
   const [errorMessage, setErrorMessage] = useState(''); // For showing error messages
   const [successMessage, setSuccessMessage] = useState(''); // For showing success messages
   const [inputType, setInputType] = useState("text");
+  const [identifier, setIdentifier] = useState('');
 
 
 
@@ -36,7 +36,7 @@ const ForgotPassword = () => {
     try {
       // Call your API to send OTP
       // await sendOTP(email);
-      const res = await forgotPasswordService.sendOTP(email);
+      const res = await forgotPasswordService.sendOTP(identifier);
       if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.bSuccess === true) {
         const otpId = res.oBody.payLoad.sOtp;
         setSuccessMessage(res.oBody.payLoad.sMessage)
@@ -142,8 +142,8 @@ const ForgotPassword = () => {
               <input
                 type="text"
                 placeholder="Enter your email or username"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                 required
               />
