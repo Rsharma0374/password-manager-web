@@ -4,11 +4,20 @@ const API_URL = 'https://api.guardianservices.in';
 // const API_URL = 'http://localhost:10001';
 const PRODUCT_NAME = "PASSWORD_MANAGER"
 
-export const login = async (credentials) => {
-  const response = await fetch(`${API_URL}/login`, {
+export const login = async (identifier, bCryptPassword) => {
+
+  const mappedDetails = {
+    sUserIdentifier: identifier,
+    sSHAPassword: bCryptPassword,
+    sProductName: PRODUCT_NAME,
+  };
+
+  const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+
+  const response = await fetch(`${API_URL}/auth/user-login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentials),
+    body: JSON.stringify({encryptedPayload : encryptedData}),
   });
   return response.json();
 };

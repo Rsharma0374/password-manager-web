@@ -39,6 +39,8 @@ const ForgotPassword = () => {
       const res = await forgotPasswordService.sendOTP(email);
       if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.bSuccess === true) {
         const otpId = res.oBody.payLoad.sOtp;
+        setSuccessMessage(res.oBody.payLoad.sMessage)
+        setTimeout(() => setSuccessMessage(''), 5000);
         setOtpId(otpId);
         setStep(2); //for otp
       } else if (res && res.aError && res.aError.length > 0) {

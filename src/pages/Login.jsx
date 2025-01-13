@@ -1,26 +1,45 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { hashPassword } from '../services/EncryptionService'
+import { login } from '../services/authService';
+
 
 
 const Login = () => {
     const navigate = useNavigate();
 
     const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState('');
+    const [shaPassword, setShaPassword] = useState('');
+    const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [otp, setOtp] = useState('');
     const [step, setStep] = useState(1);
 
-    const handleSubmit = (e) => {
+
+    const handleSubmit= async (e) => {
         e.preventDefault();
-        if (step === 1) {
-            // In a real app, validate email/password here
-            setStep(2);
-        } else {
-            // In a real app, verify OTP here
-            console.log('Login successful');
-        }
+        try {
+            const bCryptPassword = await hashPassword(password)
+
+            if (step === 1) {
+                const res = await login(identifier, bCryptPassword);
+                console.log(res)
+                // In a real app, validate email/password here
+                // setStep(2);
+            } else {
+                // In a real app, verify OTP here
+                console.log('Login successful');
+            }
+
+        } catch (error) {
+            console.error('Error occurred while sending otp:', error);
+            setErrorMessage("Failed to send OTP. Please check your network connection and try again.");
+            setTimeout(() => setErrorMessage(''), 5000);
+          } finally {
+            setLoading(false);
+          }
+        
     };
 
     return (
@@ -46,8 +65,8 @@ const Login = () => {
                                     <input
                                         type="email"
                                         placeholder="Email or Username"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        value={identifier}
+                                        onChange={(e) => setIdentifier(e.target.value)}
                                         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                                         required
                                     />

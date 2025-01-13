@@ -1,7 +1,21 @@
 // encryptionService.js
 import CryptoJS from 'crypto-js';
+import bcrypt from 'bcryptjs';
+
 const API_URL = 'https://api.guardianservices.in';
 // const API_URL = 'http://localhost:10001';
+
+
+export async function hashPassword(password) {
+    try {
+      const saltRounds = 10; // MUST match Java side
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      return hashedPassword;
+    } catch (error) {
+      console.error("Error hashing password:", error);
+      return null; // Or handle the error as needed
+    }
+  }
 
 class EncryptionService {
     static instance = null;
