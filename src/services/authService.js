@@ -67,10 +67,12 @@ export const validateOTP = async (otp, otpId) => {
     sProductName: PRODUCT_NAME,
   };
 
+  const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+
   const response = await fetch(`${API_URL}/communications/validate-email-otp`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(mappedDetails),
+    body: JSON.stringify({ encryptedPayload: encryptedData }),
   });
   return response.json();
 };

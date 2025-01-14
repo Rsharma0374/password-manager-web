@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { hashPassword } from '../services/EncryptionService'
-import { login } from '../services/authService';
+import { login, validateOTP } from '../services/authService';
+import CryptoJS from 'crypto-js';
 
 
 
@@ -18,8 +19,29 @@ const Login = () => {
     const [errorMessage, setErrorMessage] = useState(''); // For showing error messages
     const [successMessage, setSuccessMessage] = useState(''); // For showing success messages
     const [loading, setLoading] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(0); // Timer state
+    const [otpVerified, setOtpVerified] = useState(false); // Tracks OTP success
+    const [otpExpired, setOtpExpired] = useState(false); // Tracks if OTP has expired
 
 
+
+    useEffect(() => {
+        if (otpVerified) {
+            setTimeLeft(0); // Stop the timer
+            setOtpExpired(false); // Ensure no "expired" message is shown
+            return;
+        }
+
+        if (timeLeft > 0) {
+            const timerId = setInterval(() => {
+                setTimeLeft((prev) => prev - 1);
+            }, 1000);
+
+            return () => clearInterval(timerId); // Cleanup interval
+        } else {
+            setOtpExpired(true); // Mark OTP as expired
+        }
+    }, [timeLeft, otpVerified]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -30,11 +52,13 @@ const Login = () => {
             if (step === 1) {
                 const res = await login(identifier, bCryptPassword);
                 if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.sStatus === "SUCCESS") {
-                    const otpId = res.oBody.payLoad.sOtp;
+                    const otpId = res.oBody.payLoad.sOtpToken;
                     setSuccessMessage(res.oBody.payLoad.sResponse)
                     setTimeout(() => setSuccessMessage(''), 5000);
                     setOtpId(otpId);
                     setStep(2); //for otp
+                    setTimeLeft(120); // Start 2-minute timer
+                    setOtpExpired(false)
                 } else if (res && res.aError && res.aError.length > 0) {
                     const error = res.aError[0];
                     if (error) {
@@ -49,8 +73,30 @@ const Login = () => {
                     setTimeout(() => setErrorMessage(''), 5000);
                 }
             } else {
-                // In a real app, verify OTP here
-                console.log('Login successful');
+                const encryptedValue = CryptoJS.SHA1(otp + otpId).toString(CryptoJS.enc.Hex);
+                // Add your signup logic here
+                const res = await validateOTP(otp, otpId);
+                if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.sStatus === "SUCCESS" && res.oBody.payLoad.sEncryptedValue === encryptedValue) {
+                    setSuccessMessage(res.oBody.payLoad.sResponse);
+                    setTimeout(() => setSuccessMessage(''), 5000);
+                    setOtpVerified(true)
+                    // Call password manager dashboard api
+                } else if (res && res.aError && res.aError.length > 0) {
+                    const error = res.aError[0];
+                    if (error) {
+                        setErrorMessage(error.sMessage);
+                        setTimeout(() => setErrorMessage(''), 5000);
+                        setLoading(false);
+                    } else {
+                        setErrorMessage("An unexpected error occurred. Please try again.");
+                        setTimeout(() => setErrorMessage(''), 5000);
+                        setLoading(false);
+                    }
+                } else {
+                    setErrorMessage("An unexpected error occurred. Please contact system administrator.");
+                    setTimeout(() => setErrorMessage(''), 5000);
+                    setLoading(false);
+                }
             }
 
         } catch (error) {
@@ -73,7 +119,11 @@ const Login = () => {
                     <p className="text-sm text-gray-500 mt-1">
                         {step === 1
                             ? 'Please sign in to continue'
-                            : 'We sent a code to your email'}
+                            : otpVerified
+                                ? 'OTP successfully verified. Redirecting...'
+                                : otpExpired
+                                    ? 'Your OTP has expired. Please resend.'
+                                    : `We sent a code to your email. Time remaining: ${Math.floor(timeLeft / 60)}:${timeLeft % 60}`}
                     </p>
                 </div>
                 {/* Error Message */}
@@ -151,7 +201,7 @@ const Login = () => {
                     ) : (
                         <div className="space-y-4">
                             <input
-                                type="text"
+                                type="password"
                                 placeholder="Enter OTP"
                                 value={otp}
                                 onChange={(e) => setOtp(e.target.value)}
