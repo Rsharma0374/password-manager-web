@@ -109,6 +109,48 @@ const Login = () => {
 
     };
 
+    const handleResendOtp = async () => {
+        setLoading(true); // Show loading indicator
+        try {
+            if (step !== 2 || !identifier) {
+                // Handle invalid state (not in step 2 or missing identifier)
+                setErrorMessage('Invalid state for resend OTP');
+                setTimeout(() => setErrorMessage(''), 5000);
+                return;
+            }
+            const bCryptPassword = await hashPassword(password)
+
+            // Call your login API to resend OTP
+            const res = await login(identifier, bCryptPassword); // Assuming login API can resend OTP
+            if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.sStatus === "SUCCESS") {
+                const otpId = res.oBody.payLoad.sOtpToken;
+                setSuccessMessage(res.oBody.payLoad.sResponse);
+                setTimeout(() => setSuccessMessage(''), 5000);
+                setOtpId(otpId);
+                setTimeLeft(120); // Reset timer for 2 minutes
+                setOtpExpired(false);
+            } else if (res && res.aError && res.aError.length > 0) {
+                const error = res.aError[0];
+                if (error) {
+                    setErrorMessage(error.sMessage);
+                    setTimeout(() => setErrorMessage(''), 5000);
+                } else {
+                    setErrorMessage("An unexpected error occurred. Please try again.");
+                    setTimeout(() => setErrorMessage(''), 5000);
+                }
+            } else {
+                setErrorMessage("An unexpected error occurred. Please contact system administrator.");
+                setTimeout(() => setErrorMessage(''), 5000);
+            }
+        } catch (error) {
+            console.error('Error occurred while resending OTP:', error);
+            setErrorMessage("Failed to resend OTP. Please check your network connection and try again.");
+            setTimeout(() => setErrorMessage(''), 5000);
+        } finally {
+            setLoading(false); // Hide loading indicator
+        }
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 p-4">
             <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
@@ -212,6 +254,7 @@ const Login = () => {
                             <p className="text-center text-sm text-gray-500">
                                 Didn't receive code?{' '}
                                 <button
+                                onClick={handleResendOtp}
                                     type="button"
                                     className="text-blue-600 hover:text-blue-500"
                                 >

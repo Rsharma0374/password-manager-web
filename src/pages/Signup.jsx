@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { signup, sendEmailVerificationOTP, validateOTP } from '../services/authService'
 import CryptoJS from 'crypto-js';
 import { Eye, EyeOff, Mail, Lock, User, Calendar, UsersRound } from 'lucide-react';
+import { EMAIL_OTP_SMS } from '../Constants';
 
 function Signup() {
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ function Signup() {
     setErrorMessage(''); // Clear any previous error messages
     try {
       // Add your signup logic here
-      const res = await sendEmailVerificationOTP(formData.email);
+      const res = await sendEmailVerificationOTP(formData.email, EMAIL_OTP_SMS);
       if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.bSuccess === true) {
         const otpId = res.oBody.payLoad.sOtp;
         setOtpId(otpId);

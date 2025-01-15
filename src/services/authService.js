@@ -42,11 +42,11 @@ export const signup = async (details) => {
   return response.json();
 };
 
-export const sendEmailVerificationOTP = async (email) => {
+export const sendEmailVerificationOTP = async (email, emailType) => {
 
   const mappedDetails = {
     sEmailId: email,
-    sEmailType: "EMAIL_OTP_SMS",
+    sEmailType: emailType,
     bOtpRequired: true,
     sProductName: PRODUCT_NAME,
   };
