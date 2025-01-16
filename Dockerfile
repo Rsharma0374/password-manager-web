@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Build the React app using Vite
-RUN npm run build
+RUN npm run build -- --mode production
 
 # List the contents of the dist directory to verify build output
 RUN ls -l /app/dist
