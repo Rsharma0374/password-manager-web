@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "serve": "vite preview",
+    "start:dev": "vite --mode development",
+    "start:prod": "vite --mode production"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

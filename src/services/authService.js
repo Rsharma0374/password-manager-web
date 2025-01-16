@@ -1,7 +1,6 @@
 import { encryptionService } from "./EncryptionService";
 
-const API_URL = 'https://api.guardianservices.in';
-// const API_URL = 'http://localhost:10001';
+const API_URL = import.meta.env.VITE_API_URL;
 const PRODUCT_NAME = "PASSWORD_MANAGER"
 
 export const login = async (identifier, bCryptPassword) => {
@@ -70,6 +69,24 @@ export const validateOTP = async (otp, otpId) => {
   const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
 
   const response = await fetch(`${API_URL}/communications/validate-email-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ encryptedPayload: encryptedData }),
+  });
+  return response.json();
+};
+
+export const validate2FAOTP = async (otp, otpId) => {
+
+  const mappedDetails = {
+    sOtp: otp,
+    sOtpId: otpId,
+    sProductName: PRODUCT_NAME,
+  };
+
+  const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+
+  const response = await fetch(`${API_URL}/auth/validate-tfa-otp`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ encryptedPayload: encryptedData }),

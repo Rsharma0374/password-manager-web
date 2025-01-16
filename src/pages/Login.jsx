@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { hashPassword } from '../services/EncryptionService'
-import { login, validateOTP } from '../services/authService';
+import { login, validate2FAOTP } from '../services/authService';
 import CryptoJS from 'crypto-js';
 
 
@@ -75,7 +75,7 @@ const Login = () => {
             } else {
                 const encryptedValue = CryptoJS.SHA1(otp + otpId).toString(CryptoJS.enc.Hex);
                 // Add your signup logic here
-                const res = await validateOTP(otp, otpId);
+                const res = await validate2FAOTP(otp, otpId);
                 if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.sStatus === "SUCCESS" && res.oBody.payLoad.sEncryptedValue === encryptedValue) {
                     setSuccessMessage(res.oBody.payLoad.sResponse);
                     setTimeout(() => setSuccessMessage(''), 5000);

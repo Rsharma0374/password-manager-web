@@ -2,8 +2,8 @@
 import CryptoJS from 'crypto-js';
 import bcrypt from 'bcryptjs';
 
-const API_URL = 'https://api.guardianservices.in';
-// const API_URL = 'http://localhost:10001';
+// const API_URL = 'https://api.guardianservices.in';
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 export async function hashPassword(password) {
