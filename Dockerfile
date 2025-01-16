@@ -13,6 +13,8 @@ RUN npm install
 # Copy the rest of the app's source code
 COPY . .
 
+COPY .env.production /app/.env.production
+
 # Build the React app using Vite
 RUN npm run build -- --mode production
 
