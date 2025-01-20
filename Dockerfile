@@ -2,7 +2,7 @@
 FROM node:18 AS builder
 
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY package*.json .
 RUN npm install
 COPY . .
 RUN npm run build
@@ -17,6 +17,6 @@ RUN mkdir -p /usr/share/nginx/html/passmanager
 COPY --from=builder /app/dist /usr/share/nginx/html/passmanager
 
 # Expose the default Nginx port
-EXPOSE 80
+EXPOSE 81
 
 CMD ["nginx", "-g", "daemon off;"]
