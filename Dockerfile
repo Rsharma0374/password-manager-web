@@ -16,7 +16,7 @@ RUN mkdir -p /usr/share/nginx/html/passmanager
 COPY --from=builder /app/dist /usr/share/nginx/html/passmanager
 
 # Set proper permissions
-RUN chown -R jenkins:jenkins /usr/share/nginx/html/passmanager
+#RUN chown -R jenkins:jenkins /usr/share/nginx/html/passmanager
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
