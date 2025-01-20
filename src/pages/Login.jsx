@@ -4,11 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { hashPassword } from '../services/EncryptionService'
 import { login, validate2FAOTP } from '../services/authService';
 import CryptoJS from 'crypto-js';
+import { useAuth } from '../store/authStore';
 
 
 
 const Login = () => {
     const navigate = useNavigate();
+      const { authorizeToken, updateToken, logout } = useAuth();
+
 
     const [showPassword, setShowPassword] = useState(false);
     const [identifier, setIdentifier] = useState('');
@@ -80,6 +83,8 @@ const Login = () => {
                     setSuccessMessage(res.oBody.payLoad.sResponse);
                     setTimeout(() => setSuccessMessage(''), 5000);
                     setOtpVerified(true)
+                    const token = res.oBody.payLoad.sToken;
+                    handleUpdateToken(token)
                     // Call password manager dashboard api
                 } else if (res && res.aError && res.aError.length > 0) {
                     const error = res.aError[0];
@@ -108,6 +113,10 @@ const Login = () => {
         }
 
     };
+
+    const handleUpdateToken = (token) => {
+        updateToken(token);
+      };
 
     const handleResendOtp = async () => {
         setLoading(true); // Show loading indicator
