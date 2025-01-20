@@ -1,22 +1,22 @@
-FROM node:18-alpine AS builder
+# Stage 1: Build the React App
+FROM node:18 AS builder
 
 WORKDIR /app
-COPY package*.json ./
+COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
-# Production stage
+# Stage 2: Serve with Nginx
 FROM nginx:alpine
 
-# Create directory for the app
+# Ensure the correct deployment directory
 RUN mkdir -p /usr/share/nginx/html/passmanager
 
-# Copy the built files from builder stage
+# Copy the built React app from the builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html/passmanager
 
-# Set proper permissions
-#RUN chown -R jenkins:jenkins /usr/share/nginx/html/passmanager
-
+# Expose the default Nginx port
 EXPOSE 80
+
 CMD ["nginx", "-g", "daemon off;"]
