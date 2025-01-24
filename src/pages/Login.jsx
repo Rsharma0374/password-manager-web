@@ -25,6 +25,7 @@ const Login = () => {
     const [timeLeft, setTimeLeft] = useState(0); // Timer state
     const [otpVerified, setOtpVerified] = useState(false); // Tracks OTP success
     const [otpExpired, setOtpExpired] = useState(false); // Tracks if OTP has expired
+    const [username, setUsername] = useState(''); // For username
 
 
 
@@ -62,6 +63,7 @@ const Login = () => {
                     setStep(2); //for otp
                     setTimeLeft(120); // Start 2-minute timer
                     setOtpExpired(false)
+                    setUsername(res.oBody.payLoad.sUsername)
                 } else if (res && res.aError && res.aError.length > 0) {
                     const error = res.aError[0];
                     if (error) {
@@ -78,7 +80,7 @@ const Login = () => {
             } else {
                 const encryptedValue = CryptoJS.SHA1(otp + otpId).toString(CryptoJS.enc.Hex);
                 // Add your signup logic here
-                const res = await validate2FAOTP(otp, otpId);
+                const res = await validate2FAOTP(otp, otpId, username);
                 if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.sStatus === "SUCCESS" && res.oBody.payLoad.sEncryptedValue === encryptedValue) {
                     setSuccessMessage(res.oBody.payLoad.sResponse);
                     setTimeout(() => setSuccessMessage(''), 5000);

@@ -76,11 +76,12 @@ export const validateOTP = async (otp, otpId) => {
   return response.json();
 };
 
-export const validate2FAOTP = async (otp, otpId) => {
+export const validate2FAOTP = async (otp, otpId, username) => {
 
   const mappedDetails = {
     sOtp: otp,
     sOtpId: otpId,
+    sUserName: username,
     sProductName: PRODUCT_NAME,
   };
 
