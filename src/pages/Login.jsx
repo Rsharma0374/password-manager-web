@@ -64,6 +64,8 @@ const Login = () => {
                     setTimeLeft(120); // Start 2-minute timer
                     setOtpExpired(false)
                     setUsername(res.oBody.payLoad.sUsername)
+
+                    
                 } else if (res && res.aError && res.aError.length > 0) {
                     const error = res.aError[0];
                     if (error) {
@@ -87,7 +89,12 @@ const Login = () => {
                     setOtpVerified(true)
                     const token = res.oBody.payLoad.sToken;
                     handleUpdateToken(token)
+
+                    sessionStorage.setItem('token', token);
+                    sessionStorage.setItem('identifier', identifier);
+                    sessionStorage.setItem('username', username);
                     // Call password manager dashboard api
+                    navigate('/dashboard')
                 } else if (res && res.aError && res.aError.length > 0) {
                     const error = res.aError[0];
                     if (error) {

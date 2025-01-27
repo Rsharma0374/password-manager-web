@@ -1,6 +1,7 @@
 import { encryptionService } from "./EncryptionService";
 
 const API_URL = import.meta.env.VITE_API_URL;
+const API_URL_PASS_MANAGER = import.meta.env.VITE_API_URL_PASS_MANAGER_CORE;
 const PRODUCT_NAME = "PASSWORD_MANAGER"
 
 export const login = async (identifier, bCryptPassword) => {
@@ -17,6 +18,24 @@ export const login = async (identifier, bCryptPassword) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({encryptedPayload : encryptedData}),
+  });
+  return response.json();
+};
+
+export const dashboardApi = async (username, identifier, token) => {
+
+  const mappedDetails = {
+    sIdentifier: identifier,
+    sProductName: PRODUCT_NAME,
+  };
+  const response = await fetch(`${API_URL_PASS_MANAGER}/password-manager/get-dashboard-details`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'userName': username
+    },
+    body: JSON.stringify(mappedDetails),
   });
   return response.json();
 };

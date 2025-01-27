@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getAuthToken, setAuthToken} from '../store/Storage';
+import { getAuthToken, setAuthToken, getUserName, setUserName} from '../store/Storage';
 const AuthContext = createContext({
   user: null,
   authorizeToken: null,
