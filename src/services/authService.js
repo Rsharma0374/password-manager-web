@@ -17,7 +17,7 @@ export const login = async (identifier, bCryptPassword) => {
   const response = await fetch(`${API_URL}/auth/user-login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({encryptedPayload : encryptedData}),
+    body: JSON.stringify({ encryptedPayload: encryptedData }),
   });
   return response.json();
 };
@@ -29,6 +29,31 @@ export const dashboardApi = async (username, identifier, token) => {
     sProductName: PRODUCT_NAME,
   };
   const response = await fetch(`${API_URL_PASS_MANAGER}/password-manager/get-dashboard-details`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'userName': username
+    },
+    body: JSON.stringify(mappedDetails),
+  });
+  return response.json();
+};
+
+//save new entry in creds
+export const addEntry = async (data) => {
+
+  const token = sessionStorage.getItem('token');
+  const username = sessionStorage.getItem('username');
+
+  const mappedDetails = {
+    sUserName: data.sUserName,
+    sEmail: data.sEmail,
+    sPassword: data.sPassword,
+    sService: data.sService,
+    sUrl: data.sUrl
+  };
+  const response = await fetch(`${API_URL_PASS_MANAGER}/password-manager/save-data`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
