@@ -65,6 +65,56 @@ export const addEntry = async (data) => {
   return response.json();
 };
 
+//update the entry in creds
+export const updateEntry = async (data) => {
+
+  const token = sessionStorage.getItem('token');
+  const username = sessionStorage.getItem('username');
+
+  const mappedDetails = {
+    sUserName: data.sUserName,
+    sEmail: data.sEmail,
+    sPassword: data.sPassword,
+    sService: data.sService,
+    sUrl: data.sUrl
+  };
+  const response = await fetch(`${API_URL_PASS_MANAGER}/password-manager/update-data`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'userName': username
+    },
+    body: JSON.stringify(mappedDetails),
+  });
+  return response.json();
+};
+
+//delete the entry in creds
+export const deleteEntry = async (data) => {
+
+  const token = sessionStorage.getItem('token');
+  const username = sessionStorage.getItem('username');
+
+  const mappedDetails = {
+    sUserName: data.sUserName,
+    sEmail: data.sEmail,
+    sPassword: data.sPassword,
+    sService: data.sService,
+    sUrl: data.sUrl
+  };
+  const response = await fetch(`${API_URL_PASS_MANAGER}/password-manager/delete-data`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'userName': username
+    },
+    body: JSON.stringify(mappedDetails),
+  });
+  return response.json();
+};
+
 export const signup = async (details) => {
 
   const mappedDetails = {
