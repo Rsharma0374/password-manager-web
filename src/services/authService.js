@@ -22,6 +22,29 @@ export const login = async (identifier, bCryptPassword) => {
   return response.json();
 };
 
+export const callLogout = async (userName) => {
+
+  const token = sessionStorage.getItem('token');
+  const username = sessionStorage.getItem('username');
+  const mappedDetails = {
+    sUserName: userName,
+    sProductName: PRODUCT_NAME,
+  };
+
+  const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+
+  const response = await fetch(`${API_URL}/auth/logout`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'userName': username
+    },
+    body: JSON.stringify(mappedDetails),
+  });
+  return response.json();
+};
+
 export const dashboardApi = async (username, identifier, token) => {
 
   const mappedDetails = {

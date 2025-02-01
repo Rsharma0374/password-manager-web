@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/authStore';
-import { dashboardApi, addEntry, updateEntry, deleteEntry } from '../services/authService';
+import { dashboardApi, addEntry, updateEntry, deleteEntry, callLogout } from '../services/authService';
 
 const PasswordManagerDashboard = () => {
   const navigate = useNavigate();
@@ -162,6 +162,31 @@ const handleUpdateEntry = async (data) => {
   }
 };
 
+const handleLogout = async () => {
+  try {
+
+    const res = await callLogout(data.sUserName);
+
+    if (res && res.oBody && res.oBody.payLoad) {
+      setSuccessMessage(res.oBody.payLoad.responseMessage);
+      setTimeout(() => setSuccessMessage(''), 5000);
+    } else if (res && res.aError && res.aError.length > 0) {
+      const error = res.aError[0];
+      setErrorMessage(error?.sMessage || "An unexpected error occurred. Please try again.");
+      setTimeout(() => setSuccessMessage(''), 5000);
+    } else {
+      setErrorMessage("An unexpected error occurred. Please contact system administrator.");
+      setTimeout(() => setSuccessMessage(''), 5000);
+    }
+  } catch (error) {
+    console.error("Logout failed:", error);
+  } finally {
+    logout
+    sessionStorage.clear();
+    navigate('/')
+  }
+};
+
 const renderAddEditModal = (mode) => {
   const entry = mode === 'edit' ? selectedEntry : {};
 
@@ -287,7 +312,7 @@ return (
           <Plus className="mr-2 h-5 w-5" /> Add Entry
         </button>
         <button
-          onClick={logout}
+          onClick={() => handleLogout()}
           className="text-red-600 hover:text-red-700"
         >
           Logout
