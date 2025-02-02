@@ -165,7 +165,7 @@ const handleUpdateEntry = async (data) => {
 const handleLogout = async () => {
   try {
 
-    const res = await callLogout(data.sUserName);
+    const res = await callLogout(sessionStorage.getItem('username'));
 
     if (res && res.oBody && res.oBody.payLoad) {
       setSuccessMessage(res.oBody.payLoad.responseMessage);

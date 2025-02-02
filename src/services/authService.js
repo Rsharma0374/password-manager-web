@@ -1,4 +1,5 @@
-import { encryptionService } from "./EncryptionService";
+// import { encryptionService } from "./EncryptionService";
+import { encryptAES, decryptAES } from "./CryptoUtils"
 
 const API_URL = import.meta.env.VITE_API_URL;
 const API_URL_PASS_MANAGER = import.meta.env.VITE_API_URL_PASS_MANAGER_CORE;
@@ -12,14 +13,27 @@ export const login = async (identifier, bCryptPassword) => {
     sProductName: PRODUCT_NAME,
   };
 
-  const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+  // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+  const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
   const response = await fetch(`${API_URL}/auth/user-login`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'sKeyId': sessionStorage.getItem('KEY_ID')
+    },
     body: JSON.stringify({ encryptedPayload: encryptedData }),
   });
-  return response.json();
+
+  const resposeJson = await response.json()
+  // Wait for the text response
+  const encryptedResponse = resposeJson.sResponse;
+
+  // Decrypt the response
+  const decryptedResponse = decryptAES(encryptedResponse);
+  // Parse into BaseResponse format
+  const parsedResponse = JSON.parse(decryptedResponse);
+  return parsedResponse;
 };
 
 export const callLogout = async (userName) => {
@@ -31,18 +45,29 @@ export const callLogout = async (userName) => {
     sProductName: PRODUCT_NAME,
   };
 
-  const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+  // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+  const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
   const response = await fetch(`${API_URL}/auth/logout`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
-      'userName': username
+      'userName': username,
+      'sKeyId': sessionStorage.getItem('KEY_ID')
     },
     body: JSON.stringify(mappedDetails),
   });
-  return response.json();
+
+  const resposeJson = await response.json()
+  // Wait for the text response
+  const encryptedResponse = resposeJson.sResponse;
+
+  // Decrypt the response
+  const decryptedResponse = decryptAES(encryptedResponse);
+  // Parse into BaseResponse format
+  const parsedResponse = JSON.parse(decryptedResponse);
+  return parsedResponse;
 };
 
 export const dashboardApi = async (username, identifier, token) => {
@@ -56,7 +81,8 @@ export const dashboardApi = async (username, identifier, token) => {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
-      'userName': username
+      'userName': username,
+      'sKeyId': sessionStorage.getItem('KEY_ID')
     },
     body: JSON.stringify(mappedDetails),
   });
@@ -81,7 +107,8 @@ export const addEntry = async (data) => {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
-      'userName': username
+      'userName': username,
+      'sKeyId': sessionStorage.getItem('KEY_ID')
     },
     body: JSON.stringify(mappedDetails),
   });
@@ -106,7 +133,8 @@ export const updateEntry = async (data) => {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
-      'userName': username
+      'userName': username,
+      'sKeyId': sessionStorage.getItem('KEY_ID')
     },
     body: JSON.stringify(mappedDetails),
   });
@@ -131,7 +159,8 @@ export const deleteEntry = async (data) => {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
-      'userName': username
+      'userName': username,
+      'sKeyId': sessionStorage.getItem('KEY_ID')
     },
     body: JSON.stringify(mappedDetails),
   });
@@ -152,10 +181,22 @@ export const signup = async (details) => {
 
   const response = await fetch(`${API_URL}/auth/create-user`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'sKeyId': sessionStorage.getItem('KEY_ID')
+    },
     body: JSON.stringify(mappedDetails),
   });
-  return response.json();
+
+  const resposeJson = await response.json()
+  // Wait for the text response
+  const encryptedResponse = resposeJson.sResponse;
+
+  // Decrypt the response
+  const decryptedResponse = decryptAES(encryptedResponse);
+  // Parse into BaseResponse format
+  const parsedResponse = JSON.parse(decryptedResponse);
+  return parsedResponse;
 };
 
 export const sendEmailVerificationOTP = async (email, emailType) => {
@@ -169,10 +210,22 @@ export const sendEmailVerificationOTP = async (email, emailType) => {
 
   const response = await fetch(`${API_URL}/communications/send-email-otp`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'sKeyId': sessionStorage.getItem('KEY_ID')
+    },
     body: JSON.stringify(mappedDetails),
   });
-  return response.json();
+
+  const resposeJson = await response.json()
+  // Wait for the text response
+  const encryptedResponse = resposeJson.sResponse;
+
+  // Decrypt the response
+  const decryptedResponse = decryptAES(encryptedResponse);
+  // Parse into BaseResponse format
+  const parsedResponse = JSON.parse(decryptedResponse);
+  return parsedResponse;
 };
 
 export const validateOTP = async (otp, otpId) => {
@@ -183,14 +236,27 @@ export const validateOTP = async (otp, otpId) => {
     sProductName: PRODUCT_NAME,
   };
 
-  const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+  // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+  const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
   const response = await fetch(`${API_URL}/communications/validate-email-otp`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'sKeyId': sessionStorage.getItem('KEY_ID')
+    },
     body: JSON.stringify({ encryptedPayload: encryptedData }),
   });
-  return response.json();
+
+  const resposeJson = await response.json()
+  // Wait for the text response
+  const encryptedResponse = resposeJson.sResponse;
+
+  // Decrypt the response
+  const decryptedResponse = decryptAES(encryptedResponse);
+  // Parse into BaseResponse format
+  const parsedResponse = JSON.parse(decryptedResponse);
+  return parsedResponse;
 };
 
 export const validate2FAOTP = async (otp, otpId, username) => {
@@ -202,14 +268,27 @@ export const validate2FAOTP = async (otp, otpId, username) => {
     sProductName: PRODUCT_NAME,
   };
 
-  const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+  // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+  const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
   const response = await fetch(`${API_URL}/auth/validate-tfa-otp`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'sKeyId': sessionStorage.getItem('KEY_ID')
+    },
     body: JSON.stringify({ encryptedPayload: encryptedData }),
   });
-  return response.json();
+
+  const resposeJson = await response.json()
+  // Wait for the text response
+  const encryptedResponse = resposeJson.sResponse;
+
+  // Decrypt the response
+  const decryptedResponse = decryptAES(encryptedResponse);
+  // Parse into BaseResponse format
+  const parsedResponse = JSON.parse(decryptedResponse);
+  return parsedResponse;
 };
 
 export const forgotPasswordService = {
@@ -220,16 +299,27 @@ export const forgotPasswordService = {
       sUserIdentifier: identifier,
       sProductName: PRODUCT_NAME,
     };
-    const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+    // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+    const encryptedData = encryptAES(JSON.stringify(mappedDetails));
     const response = await fetch(`${API_URL}/auth/forget-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'sKeyId': sessionStorage.getItem('KEY_ID')
       },
       body: JSON.stringify({ encryptedPayload: encryptedData }),
     });
 
-    return response.json();
+
+    const resposeJson = await response.json()
+    // Wait for the text response
+    const encryptedResponse = resposeJson.sResponse;
+
+    // Decrypt the response
+    const decryptedResponse = decryptAES(encryptedResponse);
+    // Parse into BaseResponse format
+    const parsedResponse = JSON.parse(decryptedResponse);
+    return parsedResponse;
   },
 
   // Verify OTP
@@ -240,17 +330,28 @@ export const forgotPasswordService = {
       sOtpId: otpId,
       sProductName: PRODUCT_NAME,
     };
-    const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+    // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+    const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
     const response = await fetch(`${API_URL}/communications/validate-otp-reset-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'sKeyId': sessionStorage.getItem('KEY_ID')
       },
       body: JSON.stringify({ encryptedPayload: encryptedData }),
     });
 
-    return response.json();
+
+    const resposeJson = await response.json()
+    // Wait for the text response
+    const encryptedResponse = resposeJson.sResponse;
+
+    // Decrypt the response
+    const decryptedResponse = decryptAES(encryptedResponse);
+    // Parse into BaseResponse format
+    const parsedResponse = JSON.parse(decryptedResponse);
+    return parsedResponse;
   },
 
   // Reset password
@@ -260,6 +361,7 @@ export const forgotPasswordService = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'sKeyId': sessionStorage.getItem('KEY_ID')
         },
         body: JSON.stringify({ email, otp, newPassword }),
       });
@@ -268,7 +370,15 @@ export const forgotPasswordService = {
         throw new Error('Failed to reset password');
       }
 
-      return await response.json();
+      const resposeJson = await response.json()
+      // Wait for the text response
+      const encryptedResponse = resposeJson.sResponse;
+
+      // Decrypt the response
+      const decryptedResponse = decryptAES(encryptedResponse);
+      // Parse into BaseResponse format
+      const parsedResponse = JSON.parse(decryptedResponse);
+      return parsedResponse;
     } catch (error) {
       throw error;
     }

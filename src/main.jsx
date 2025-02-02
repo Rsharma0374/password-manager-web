@@ -1,22 +1,34 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
+import React, { useState, useEffect } from "react";
+import ReactDOM from "react-dom/client";
+import { initializeAESKey } from "./services/CryptoUtils";
 import './index.css';
-import { AuthProvider } from './store/authStore';
-import { encryptionService } from './services/EncryptionService';
+import App from "./App";
 
-// Initialize encryption service before rendering
-encryptionService.initialize()
-  .then(() => {
-    ReactDOM.createRoot(document.getElementById('root')).render(
-      <React.StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+function Root() {
+  const [isKeyLoaded, setIsKeyLoaded] = useState(false);
+
+  useEffect(() => {
+    async function fetchKey() {
+      try {
+        await initializeAESKey();
+        setIsKeyLoaded(true);
+      } catch (error) {
+        console.error("Failed to initialize AES key:", error);
+      }
+    }
+
+    fetchKey();
+  }, []);
+
+  if (!isKeyLoaded) {
+    return <div>Loading security keys...</div>; // Or a loading spinner
+  }
+
+  return <App />;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <Root />
   </React.StrictMode>
-    );
-  })
-  .catch(error => {
-    console.error('Failed to initialize encryption service:', error);
-    // You might want to show an error page or handle this case appropriately
-  });
+);

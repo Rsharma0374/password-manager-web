@@ -4,11 +4,13 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
+// import { initializeAESKey } from "./services/CryptoUtils";
 
 function App() {
 
   useEffect(() => {
     const handleUnload = () => {
+      // initializeAESKey();
       sessionStorage.clear();
     };
 
