@@ -21,7 +21,7 @@ function Root() {
   }, []);
 
   if (!isKeyLoaded) {
-    return <div>Loading security keys...</div>; // Or a loading spinner
+    return <div>Loading...</div>; // Or a loading spinner
   }
 
   return <App />;
