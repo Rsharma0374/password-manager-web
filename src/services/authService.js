@@ -56,7 +56,7 @@ export const callLogout = async (userName) => {
       'userName': username,
       'sKeyId': sessionStorage.getItem('KEY_ID')
     },
-    body: JSON.stringify(mappedDetails),
+    body: JSON.stringify({ encryptedPayload: encryptedData }),
   });
 
   const resposeJson = await response.json()
@@ -178,6 +178,8 @@ export const signup = async (details) => {
     sDateOfBirth: details.dateOfBirth,
     sProductName: PRODUCT_NAME,
   };
+  // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+  const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
   const response = await fetch(`${API_URL}/auth/create-user`, {
     method: 'POST',
@@ -185,7 +187,7 @@ export const signup = async (details) => {
       'Content-Type': 'application/json',
       'sKeyId': sessionStorage.getItem('KEY_ID')
     },
-    body: JSON.stringify(mappedDetails),
+    body: JSON.stringify({encryptedPayload: encryptedData}),
   });
 
   const resposeJson = await response.json()
@@ -207,6 +209,8 @@ export const sendEmailVerificationOTP = async (email, emailType) => {
     bOtpRequired: true,
     sProductName: PRODUCT_NAME,
   };
+  // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+  const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
   const response = await fetch(`${API_URL}/communications/send-email-otp`, {
     method: 'POST',
@@ -214,7 +218,7 @@ export const sendEmailVerificationOTP = async (email, emailType) => {
       'Content-Type': 'application/json',
       'sKeyId': sessionStorage.getItem('KEY_ID')
     },
-    body: JSON.stringify(mappedDetails),
+    body: JSON.stringify({encryptedPayload: encryptedData}),
   });
 
   const resposeJson = await response.json()
