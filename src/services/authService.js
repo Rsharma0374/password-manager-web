@@ -1,8 +1,6 @@
 // import { encryptionService } from "./EncryptionService";
 import { encryptAES, decryptAES } from "./CryptoUtils"
-
 const API_URL = import.meta.env.VITE_API_URL;
-const API_URL_PASS_MANAGER = import.meta.env.VITE_API_URL_PASS_MANAGER_CORE;
 const PRODUCT_NAME = "PASSWORD_MANAGER"
 
 export const login = async (identifier, bCryptPassword) => {
@@ -76,7 +74,8 @@ export const dashboardApi = async (username, identifier, token) => {
     sIdentifier: identifier,
     sProductName: PRODUCT_NAME,
   };
-  const response = await fetch(`${API_URL_PASS_MANAGER}/password-manager/get-dashboard-details`, {
+  const encryptedData = encryptAES(JSON.stringify(mappedDetails));
+  const response = await fetch(`${API_URL}/password-manager/get-dashboard-details`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -84,9 +83,17 @@ export const dashboardApi = async (username, identifier, token) => {
       'userName': username,
       'sKeyId': sessionStorage.getItem('KEY_ID')
     },
-    body: JSON.stringify(mappedDetails),
+    body: JSON.stringify({ encryptedPayload: encryptedData }),
   });
-  return response.json();
+  const resposeJson = await response.json()
+  // Wait for the text response
+  const encryptedResponse = resposeJson.sResponse;
+
+  // Decrypt the response
+  const decryptedResponse = decryptAES(encryptedResponse);
+  // Parse into BaseResponse format
+  const parsedResponse = JSON.parse(decryptedResponse);
+  return parsedResponse;
 };
 
 //save new entry in creds
@@ -102,7 +109,8 @@ export const addEntry = async (data) => {
     sService: data.sService,
     sUrl: data.sUrl
   };
-  const response = await fetch(`${API_URL_PASS_MANAGER}/password-manager/save-data`, {
+  const encryptedData = encryptAES(JSON.stringify(mappedDetails));
+  const response = await fetch(`${API_URL}/password-manager/save-data`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -110,9 +118,17 @@ export const addEntry = async (data) => {
       'userName': username,
       'sKeyId': sessionStorage.getItem('KEY_ID')
     },
-    body: JSON.stringify(mappedDetails),
+    body: JSON.stringify({ encryptedPayload: encryptedData }),
   });
-  return response.json();
+  const resposeJson = await response.json()
+  // Wait for the text response
+  const encryptedResponse = resposeJson.sResponse;
+
+  // Decrypt the response
+  const decryptedResponse = decryptAES(encryptedResponse);
+  // Parse into BaseResponse format
+  const parsedResponse = JSON.parse(decryptedResponse);
+  return parsedResponse;
 };
 
 //update the entry in creds
@@ -128,7 +144,8 @@ export const updateEntry = async (data) => {
     sService: data.sService,
     sUrl: data.sUrl
   };
-  const response = await fetch(`${API_URL_PASS_MANAGER}/password-manager/update-data`, {
+  const encryptedData = encryptAES(JSON.stringify(mappedDetails));
+  const response = await fetch(`${API_URL}/password-manager/update-data`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -136,9 +153,17 @@ export const updateEntry = async (data) => {
       'userName': username,
       'sKeyId': sessionStorage.getItem('KEY_ID')
     },
-    body: JSON.stringify(mappedDetails),
+    body: JSON.stringify({ encryptedPayload: encryptedData }),
   });
-  return response.json();
+  const resposeJson = await response.json()
+  // Wait for the text response
+  const encryptedResponse = resposeJson.sResponse;
+
+  // Decrypt the response
+  const decryptedResponse = decryptAES(encryptedResponse);
+  // Parse into BaseResponse format
+  const parsedResponse = JSON.parse(decryptedResponse);
+  return parsedResponse;
 };
 
 //delete the entry in creds
@@ -154,7 +179,8 @@ export const deleteEntry = async (data) => {
     sService: data.sService,
     sUrl: data.sUrl
   };
-  const response = await fetch(`${API_URL_PASS_MANAGER}/password-manager/delete-data`, {
+  const encryptedData = encryptAES(JSON.stringify(mappedDetails));
+  const response = await fetch(`${API_URL}/password-manager/delete-data`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -162,9 +188,17 @@ export const deleteEntry = async (data) => {
       'userName': username,
       'sKeyId': sessionStorage.getItem('KEY_ID')
     },
-    body: JSON.stringify(mappedDetails),
+    body: JSON.stringify({ encryptedPayload: encryptedData }),
   });
-  return response.json();
+  const resposeJson = await response.json()
+  // Wait for the text response
+  const encryptedResponse = resposeJson.sResponse;
+
+  // Decrypt the response
+  const decryptedResponse = decryptAES(encryptedResponse);
+  // Parse into BaseResponse format
+  const parsedResponse = JSON.parse(decryptedResponse);
+  return parsedResponse;
 };
 
 export const signup = async (details) => {

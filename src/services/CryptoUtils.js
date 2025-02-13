@@ -9,16 +9,17 @@ export async function initializeAESKey() {
         try {
             
 
-            const response = await fetch(`${API_URL}/api/key`, {
+            const response = await fetch(`${API_URL}/gateway/key`, {
+                // const response = await fetch("http://localhost:10008/gateway/key", {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json'
                 }
               });
               const res = await response.json();  
-            if (res && res.oBody && res.oBody.payLoad) {
-                sessionStorage.setItem("AES_KEY", res.oBody.payLoad.sKey);
-                sessionStorage.setItem("KEY_ID", res.oBody.payLoad.sId);
+            if (res && res.sKey && res.sId) {
+                sessionStorage.setItem("AES_KEY", res.sKey);
+                sessionStorage.setItem("KEY_ID", res.sId);
             }
 
 

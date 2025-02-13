@@ -14,6 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/authStore';
 import { dashboardApi, addEntry, updateEntry, deleteEntry, callLogout } from '../services/authService';
+import { initializeAESKey } from "../services/CryptoUtils";
 
 const PasswordManagerDashboard = () => {
   const navigate = useNavigate();
@@ -104,7 +105,6 @@ const PasswordManagerDashboard = () => {
       setErrorMessage('Failed to add entry. Please try again.');
       setTimeout(() => setSuccessMessage(''), 5000);
     }
-    console.log('Delete entry:', username);
   }
 };
 
@@ -183,6 +183,13 @@ const handleLogout = async () => {
   } finally {
     logout
     sessionStorage.clear();
+
+    // Initialize new AES key after clearing session
+    try {
+      await initializeAESKey();
+    } catch (error) {
+      console.error("Failed to initialize new AES key after logout:", error);
+    }
     navigate('/')
   }
 };
