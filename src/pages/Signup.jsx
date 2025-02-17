@@ -329,11 +329,24 @@ function Signup() {
             <div className="relative">
               <Calendar className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <input
-                type="date"
+                type="text" // Initially a text field
                 name="dateOfBirth"
                 value={formData.dateOfBirth}
-                onChange={handleChange}
+                onFocus={(e) => (e.target.type = "date")} // Switch to date picker on focus
+                onBlur={(e) => {
+                  if (!formData.dateOfBirth) e.target.type = "text"; // Revert to text if no date selected
+                }}
+                onChange={(e) => {
+                  const selectedDate = e.target.value;
+                  setFormData({
+                    ...formData,
+                    dateOfBirth: selectedDate
+                      ? new Date(selectedDate).toLocaleDateString("en-GB") // Format to DD/MM/YYYY
+                      : "",
+                  });
+                }}
                 max={new Date().toISOString().split("T")[0]} // Restrict to past dates
+                placeholder="Select DOB" // Placeholder when no date is selected
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                 required
               />
