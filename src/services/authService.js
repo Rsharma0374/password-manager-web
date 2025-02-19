@@ -297,6 +297,43 @@ export const validateOTP = async (otp, otpId) => {
   return parsedResponse;
 };
 
+export const changePassword = async (userIdentifier, oldPassword, newPassword) => {
+
+  const token = sessionStorage.getItem('token');
+  const username = sessionStorage.getItem('username');
+
+  const mappedDetails = {
+    sUserIdentifier: userIdentifier,
+    sOldPassword: oldPassword,
+    sNewPassword: newPassword,
+    sProductName: PRODUCT_NAME,
+  };
+
+  // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
+  const encryptedData = encryptAES(JSON.stringify(mappedDetails));
+
+  const response = await fetch(`${API_URL}/auth/change-password`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'userName': username,
+      'sKeyId': sessionStorage.getItem('KEY_ID')
+    },
+    body: JSON.stringify({ encryptedPayload: encryptedData }),
+  });
+
+  const resposeJson = await response.json()
+  // Wait for the text response
+  const encryptedResponse = resposeJson.sResponse;
+
+  // Decrypt the response
+  const decryptedResponse = decryptAES(encryptedResponse);
+  // Parse into BaseResponse format
+  const parsedResponse = JSON.parse(decryptedResponse);
+  return parsedResponse;
+};
+
 export const validate2FAOTP = async (otp, otpId, username) => {
 
   const mappedDetails = {

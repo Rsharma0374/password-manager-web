@@ -155,7 +155,7 @@ function Signup() {
         setTimeout(() => {
           setLoading(false);
           navigate('/');
-        }, 5000);
+        }, 2000);
       } else if (res && res.aError && res.aError.length > 0) {
         const error = res.aError[0];
         if (error) {
