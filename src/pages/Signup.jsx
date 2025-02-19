@@ -331,7 +331,7 @@ function Signup() {
               <input
                 type="text" // Initially a text field
                 name="dateOfBirth"
-                value={formData.dateOfBirth}
+                value={formData.dateOfBirth ? formData.dateOfBirth : ""}
                 onFocus={(e) => (e.target.type = "date")} // Switch to date picker on focus
                 onBlur={(e) => {
                   if (!formData.dateOfBirth) e.target.type = "text"; // Revert to text if no date selected
@@ -340,9 +340,7 @@ function Signup() {
                   const selectedDate = e.target.value;
                   setFormData({
                     ...formData,
-                    dateOfBirth: selectedDate
-                      ? new Date(selectedDate).toLocaleDateString("en-GB") // Format to DD/MM/YYYY
-                      : "",
+                    dateOfBirth: selectedDate, // Store in "YYYY-MM-DD"
                   });
                 }}
                 max={new Date().toISOString().split("T")[0]} // Restrict to past dates
@@ -351,6 +349,7 @@ function Signup() {
                 required
               />
             </div>
+
 
             <button
               type="submit"
