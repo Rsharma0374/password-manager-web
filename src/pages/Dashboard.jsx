@@ -9,8 +9,11 @@ import {
   Lock,
   User,
   Globe,
-  RefreshCw
+  RefreshCw,
+  Eye,
+  EyeOff
 } from 'lucide-react';
+
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/authStore';
 import { dashboardApi, addEntry, updateEntry, deleteEntry, callLogout, changePassword } from '../services/authService';
@@ -31,6 +34,8 @@ const PasswordManagerDashboard = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
 
   // First useEffect for initial data fetch
   useEffect(() => {
@@ -179,7 +184,6 @@ const PasswordManagerDashboard = () => {
 
     try {
       setLoading(true);
-      // const res = await changePassword(currentPassword, newPassword);
       const res = await changePassword(identifier, currentPassword, newPassword);
 
       if (res && res.oBody && res.oBody.payLoad && res.oBody.payLoad.sStatus === "200") {
@@ -187,7 +191,7 @@ const PasswordManagerDashboard = () => {
         setTimeout(() => {
           setSuccessMessage('');
           setIsChangePasswordModalOpen(false);
-        }, 5000);
+        }, 2400);
       } else if (res && res.aError && res.aError.length > 0) {
         const error = res.aError[0];
         setErrorMessage(error?.sMessage || "An unexpected error occurred. Please try again.");
@@ -359,27 +363,61 @@ const PasswordManagerDashboard = () => {
 
           <form onSubmit={handleChangePassword}>
             <div className="space-y-4">
-              <input
-                type="password"
-                name="currentPassword"
-                placeholder="Current Password"
-                className="w-full px-3 py-2 border rounded-lg"
-                required
-              />
-              <input
-                type="password"
-                name="newPassword"
-                placeholder="New Password"
-                className="w-full px-3 py-2 border rounded-lg"
-                required
-              />
-              <input
-                type="password"
-                name="confirmNewPassword"
-                placeholder="Confirm New Password"
-                className="w-full px-3 py-2 border rounded-lg"
-                required
-              />
+
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="currentPassword"
+                  placeholder="Current Password"
+                  className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              </div>
+
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="newPassword"
+                  placeholder="New Password"
+                  className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              </div>
+
+
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="confirmNewPassword"
+                  placeholder="Confirm New Password"
+                  className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              </div>
             </div>
 
             <div className="flex justify-end space-x-2 mt-4">
