@@ -1,6 +1,7 @@
 // import { encryptionService } from "./EncryptionService";
 import { encryptAES, decryptAES } from "./CryptoUtils"
 const API_URL = import.meta.env.VITE_API_URL;
+const API_URL_USER_SERVICE = import.meta.env.VITE_API_URL_USER_SERVICE;
 const PRODUCT_NAME = "PASSWORD_MANAGER"
 
 export const login = async (identifier, bCryptPassword) => {
@@ -14,7 +15,7 @@ export const login = async (identifier, bCryptPassword) => {
   // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
   const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
-  const response = await fetch(`${API_URL}/auth-service/auth/user-login`, {
+  const response = await fetch(`${API_URL_USER_SERVICE}/auth/user-login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -46,7 +47,7 @@ export const callLogout = async (userName) => {
   // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
   const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
-  const response = await fetch(`${API_URL}/auth-service/auth/logout`, {
+  const response = await fetch(`${API_URL_USER_SERVICE}/auth/logout`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -75,7 +76,7 @@ export const dashboardApi = async (username, identifier, token) => {
     sProductName: PRODUCT_NAME,
   };
   const encryptedData = encryptAES(JSON.stringify(mappedDetails));
-  const response = await fetch(`${API_URL}/auth-service/password-manager/get-dashboard-details`, {
+  const response = await fetch(`${API_URL}/password-manager/get-dashboard-details`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -110,7 +111,7 @@ export const addEntry = async (data) => {
     sUrl: data.sUrl
   };
   const encryptedData = encryptAES(JSON.stringify(mappedDetails));
-  const response = await fetch(`${API_URL}/auth-service/password-manager/save-data`, {
+  const response = await fetch(`${API_URL}/password-manager/save-data`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -145,7 +146,7 @@ export const updateEntry = async (data) => {
     sUrl: data.sUrl
   };
   const encryptedData = encryptAES(JSON.stringify(mappedDetails));
-  const response = await fetch(`${API_URL}/auth-service/password-manager/update-data`, {
+  const response = await fetch(`${API_URL}/password-manager/update-data`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -180,7 +181,7 @@ export const deleteEntry = async (data) => {
     sUrl: data.sUrl
   };
   const encryptedData = encryptAES(JSON.stringify(mappedDetails));
-  const response = await fetch(`${API_URL}/auth-service/password-manager/delete-data`, {
+  const response = await fetch(`${API_URL}/password-manager/delete-data`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -215,7 +216,7 @@ export const signup = async (details) => {
   // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
   const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
-  const response = await fetch(`${API_URL}/auth-service/auth/create-user`, {
+  const response = await fetch(`${API_URL_USER_SERVICE}/auth/create-user`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -246,7 +247,7 @@ export const sendEmailVerificationOTP = async (email, emailType) => {
   // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
   const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
-  const response = await fetch(`${API_URL}/auth-service/communications/send-email-otp`, {
+  const response = await fetch(`${API_URL_USER_SERVICE}/communications/send-email-otp`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -277,7 +278,7 @@ export const validateOTP = async (otp, otpId) => {
   // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
   const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
-  const response = await fetch(`${API_URL}/auth-service/communications/validate-email-otp`, {
+  const response = await fetch(`${API_URL_USER_SERVICE}/communications/validate-email-otp`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -312,7 +313,7 @@ export const changePassword = async (userIdentifier, oldPassword, newPassword) =
   // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
   const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
-  const response = await fetch(`${API_URL}/auth-service/auth/change-password`, {
+  const response = await fetch(`${API_URL_USER_SERVICE}/auth/change-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -346,7 +347,7 @@ export const validate2FAOTP = async (otp, otpId, username) => {
   // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
   const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
-  const response = await fetch(`${API_URL}/auth-service/auth/validate-tfa-otp`, {
+  const response = await fetch(`${API_URL_USER_SERVICE}/auth/validate-tfa-otp`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -376,7 +377,7 @@ export const forgotPasswordService = {
     };
     // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
     const encryptedData = encryptAES(JSON.stringify(mappedDetails));
-    const response = await fetch(`${API_URL}/auth-service/auth/forget-password`, {
+    const response = await fetch(`${API_URL_USER_SERVICE}/auth/forget-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -408,7 +409,7 @@ export const forgotPasswordService = {
     // const encryptedData = await encryptionService.encrypt(JSON.stringify(mappedDetails));
     const encryptedData = encryptAES(JSON.stringify(mappedDetails));
 
-    const response = await fetch(`${API_URL}/auth-service/communications/validate-otp-reset-password`, {
+    const response = await fetch(`${API_URL_USER_SERVICE}/communications/validate-otp-reset-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -432,7 +433,7 @@ export const forgotPasswordService = {
   // Reset password
   resetPassword: async (email, otp, newPassword) => {
     try {
-      const response = await fetch(`${API_URL}/auth-service/reset-password`, {
+      const response = await fetch(`${API_URL_USER_SERVICE}/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
